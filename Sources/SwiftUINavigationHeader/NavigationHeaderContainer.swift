@@ -1,5 +1,5 @@
 //
-//  HeaderWrapper.swift
+//  NavigationHeaderContainer.swift
 //  
 //
 //  Created by Alexander Eichhorn on 12.07.20.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct HeaderWrapper<Header, Content>: View where Header: View, Content: View {
+public struct NavigationHeaderContainer<Header, Content>: View where Header: View, Content: View {
     let header: Header
     let content: Content
     
@@ -34,7 +34,7 @@ public struct HeaderWrapper<Header, Content>: View where Header: View, Content: 
                                 .transformEffect(CGAffineTransform(translationX: 0, y: self.backdropTranslation(for: geo)))
                             
                         }
-                        .navigationBarHeader(barState: self.navigationBarState(for: geo))
+                        .navigationBarState(self.navigationBarState(for: geo))
                     }
                     .frame(height: self.unscaledBackdropHeight(for: outerGeo))
                     

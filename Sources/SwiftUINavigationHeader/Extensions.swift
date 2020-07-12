@@ -15,7 +15,7 @@ extension UINavigationBar {
     
     var rawBarButtons: [UIView] {
         let contentView = subviews.first(where: { NSStringFromClass($0.classForCoder) == "_UINavigationBarContentView" })
-        return contentView?.subviews ?? []//.filter({ NSStringFromClass($0.classForCoder) == "_UIButtonBarButton" }) ?? []
+        return contentView?.subviews ?? [] //.filter({ NSStringFromClass($0.classForCoder) == "_UIButtonBarButton" }) ?? []
     }
     
 }

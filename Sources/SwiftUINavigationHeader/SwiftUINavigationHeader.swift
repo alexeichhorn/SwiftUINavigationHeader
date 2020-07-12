@@ -1,9 +1,9 @@
 import SwiftUI
 
 public extension View {
-    func navigationBarHeader(barState: BarState) -> some View {
+    func navigationBarState(_ barState: BarState) -> some View {
         return navigationBarTitleDisplayMode(.inline)
-            .overlay(NavigationViewHeader(state: barState).frame(width: 0, height: 0))
+            .overlay(NavigationBarView(state: barState).frame(width: 0, height: 0))
     }
 }
 
@@ -13,7 +13,7 @@ public enum BarState {
     case compact
 }
 
-fileprivate struct NavigationViewHeader: UIViewControllerRepresentable {
+fileprivate struct NavigationBarView: UIViewControllerRepresentable {
     let barState: BarState
     
     init(state: BarState) {
@@ -25,7 +25,6 @@ fileprivate struct NavigationViewHeader: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: NavigationViewWrapperController, context: Context) {
-        //
         uiViewController.setNavigationBarTransitionState(barState)
     }
     
@@ -46,12 +45,8 @@ fileprivate struct NavigationViewHeader: UIViewControllerRepresentable {
         
         var currentBarState: BarState = .expanded
         
-        override func viewWillAppear(_ animated: Bool) {
-            print("wrapper will appear")
-        }
-        
         override func viewDidAppear(_ animated: Bool) {
-            print("wrapper did appear")
+            setNavigationBarTransitionState(currentBarState)
         }
         
         private var navigationBar: UINavigationBar? {
