@@ -11,11 +11,15 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
     let header: Header
     let content: Content
     let bottomFadeout: Bool
+    let headerAlignment: Alignment
     
-    public init(bottomFadeout: Bool = false, @ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content) {
+    private var headerHeight: ((CGSize) -> CGFloat)?
+    
+    public init(bottomFadeout: Bool = false, headerAlignment: Alignment = .center, @ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content) {
         self.header = header()
         self.content = content()
         self.bottomFadeout = bottomFadeout
+        self.headerAlignment = headerAlignment
     }
     
     public var body: some View {
@@ -26,8 +30,9 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
                         ZStack(alignment: .top) {
                             
                             header
-                                .frame(width: geo.size.width, height: self.unscaledBackdropHeight(for: geo), alignment: .top)
-                                .scaleEffect(self.backdropScale(for: geo), anchor: .bottom)
+                                .frame(width: geo.size.width, height: self.unscaledBackdropHeight(for: outerGeo), alignment: headerAlignment)
+                                .clipped()
+                                .scaleEffect(self.backdropScale(for: geo, outerGeometry: outerGeo), anchor: .bottom)
                             
                             // top fade out
                             Rectangle()
@@ -45,7 +50,7 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
                             }
                             
                         }
-                        .navigationBarState(self.navigationBarState(for: geo))
+                        .navigationBarState(self.navigationBarState(for: geo, outerGeometry: outerGeo))
                     }
                     .frame(height: self.unscaledBackdropHeight(for: outerGeo))
                     
@@ -57,18 +62,29 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
     }
     
     
-    // TODO: outsource it
+    public func headerHeight(_ closure: @escaping (_ frameSize: CGSize) -> CGFloat) -> some View {
+        var modifiedSelf = self
+        modifiedSelf.headerHeight = closure
+        return modifiedSelf
+    }
+    
+    
     private func unscaledBackdropHeight(for geometry: GeometryProxy) -> CGFloat {
+        
+        if let height = self.headerHeight?(geometry.size) {
+            return height
+        }
+        
         let width = geometry.size.width
         let height = width / 16.0 * 9.0
         if height < 300 { return height + 84 }
         return height
     }
     
-    private func backdropScale(for geometry: GeometryProxy) -> CGFloat {
+    private func backdropScale(for geometry: GeometryProxy, outerGeometry: GeometryProxy) -> CGFloat {
         let frame = geometry.frame(in: .global)
         //print(frame)
-        let height = unscaledBackdropHeight(for: geometry)
+        let height = unscaledBackdropHeight(for: outerGeometry)
         //if frame.minY + 84 <= 0 { return 1.0 }
         let y = max(frame.minY, 0) // -84
         return (height + y) / height
@@ -84,12 +100,12 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
         UIApplication.shared.windows.first?.safeAreaInsets.top ?? 0
     }
     
-    private func navigationBarState(for geometry: GeometryProxy) -> BarState {
+    private func navigationBarState(for geometry: GeometryProxy, outerGeometry: GeometryProxy) -> BarState {
         let frame = geometry.frame(in: .global)
         let offset = -frame.minY + safeAreaTop // +64 works for iPhone X
-        let height = unscaledBackdropHeight(for: geometry)
+        let height = unscaledBackdropHeight(for: outerGeometry)
         
-        print(frame)
+        //print(frame)
         
         if offset < height-44 {
             return .expanded
