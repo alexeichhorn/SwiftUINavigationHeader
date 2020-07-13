@@ -53,6 +53,12 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
             setNavigationBarTransitionState(currentBarState)
         }
         
+        override func viewDidLayoutSubviews() {
+            super.viewDidLayoutSubviews()
+            
+            setNavigationBarTransitionState(currentBarState)
+        }
+        
         private var navigationBar: UINavigationBar? {
             //(view.next as? UIViewController)?.navigationController?.navigationBar
             return findNavBar(self.view)
