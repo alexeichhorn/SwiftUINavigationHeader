@@ -1,6 +1,8 @@
 # SwiftUINavigationHeader
 
-Create a great navigation header in few lines of code in SwiftUI
+<img src="images/expanded1.jpg" width="250">
+
+Create a great navigation header like this in SwiftUI with just a few lines of code
 
 ```
 import SwiftUINavigationHeader
