@@ -23,7 +23,7 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
             ScrollView {
                 //VStack {
                     GeometryReader { geo in
-                        ZStack(alignment: .bottom) {
+                        ZStack(alignment: .top) {
                             
                             header
                                 .frame(width: geo.size.width, height: self.unscaledBackdropHeight(for: geo), alignment: .top)
@@ -32,7 +32,8 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
                             // top fade out
                             Rectangle()
                                 .foregroundColor(.clear)
-                                .background(LinearGradient(gradient: self.topGradient, startPoint: .top, endPoint: .center))
+                                .background(LinearGradient(gradient: self.topGradient, startPoint: .top, endPoint: .bottom))
+                                .frame(height: 120, alignment: .top)
                                 .transformEffect(CGAffineTransform(translationX: 0, y: self.backdropTranslation(for: geo)))
                             
                             
@@ -101,9 +102,11 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
     
     private var topGradient: Gradient {
         return Gradient(stops: [
-            Gradient.Stop(color: Color(.systemBackground).opacity(0.3), location: 0.0),
+            /*Gradient.Stop(color: Color(.systemBackground).opacity(0.3), location: 0.0),
             Gradient.Stop(color: Color(.systemBackground).opacity(0.2), location: 0.3),
-            Gradient.Stop(color: .clear, location: 0.6)
+            Gradient.Stop(color: .clear, location: 0.6)*/
+            Gradient.Stop(color: Color(.systemBackground).opacity(0.3), location: 0),
+            Gradient.Stop(color: .clear, location: 1)
         ])
     }
 }
