@@ -64,7 +64,13 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
             return findNavBar(self.view)
         }
         
+        private var isActive: Bool {
+            self.navigationController?.topViewController == self.parent
+        }
+        
         func setNavigationBarTransitionState(_ state: BarState) {
+            guard isActive else { return }
+            
             switch state {
             case .expanded:
                 navigationBar?.backgroundView?.alpha = 0

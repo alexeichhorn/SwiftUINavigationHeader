@@ -118,9 +118,6 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
     
     private var topGradient: Gradient {
         return Gradient(stops: [
-            /*Gradient.Stop(color: Color(.systemBackground).opacity(0.3), location: 0.0),
-            Gradient.Stop(color: Color(.systemBackground).opacity(0.2), location: 0.3),
-            Gradient.Stop(color: .clear, location: 0.6)*/
             Gradient.Stop(color: Color(.systemBackground).opacity(0.3), location: 0),
             Gradient.Stop(color: .clear, location: 1)
         ])
