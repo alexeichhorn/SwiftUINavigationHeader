@@ -10,10 +10,12 @@ import SwiftUI
 public struct NavigationHeaderContainer<Header, Content>: View where Header: View, Content: View {
     let header: Header
     let content: Content
+    let bottomFadeout: Bool
     
-    public init(@ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content) {
+    public init(bottomFadeout: Bool = false, @ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content) {
         self.header = header()
         self.content = content()
+        self.bottomFadeout = bottomFadeout
     }
     
     public var body: some View {
@@ -32,6 +34,14 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
                                 .foregroundColor(.clear)
                                 .background(LinearGradient(gradient: self.topGradient, startPoint: .top, endPoint: .center))
                                 .transformEffect(CGAffineTransform(translationX: 0, y: self.backdropTranslation(for: geo)))
+                            
+                            
+                            if bottomFadeout {
+                                // bottom fade out
+                                Rectangle()
+                                    .foregroundColor(.clear)
+                                    .background(LinearGradient(gradient: Gradient(colors: [.clear, Color(.systemBackground)]), startPoint: .center, endPoint: .bottom))
+                            }
                             
                         }
                         .navigationBarState(self.navigationBarState(for: geo))
