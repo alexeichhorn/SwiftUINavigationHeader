@@ -35,3 +35,10 @@ struct ThirdView: View {
             .frame(width: 200, height: 200, alignment: .center)
     }
 }
+```
+
+Subsequent views inside the same NavigationView should have the following added code snippet, to make sure the navigation bar is always in the correct state:
+
+```
+.navigationBarState(.compact, displayMode: .automatic)
+```
