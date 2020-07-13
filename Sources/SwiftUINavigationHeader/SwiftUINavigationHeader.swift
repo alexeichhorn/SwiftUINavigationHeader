@@ -45,12 +45,17 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
         
         var currentBarState: BarState = .expanded
         
+        override func viewWillAppear(_ animated: Bool) {
+            setNavigationBarTransitionState(currentBarState)
+        }
+        
         override func viewDidAppear(_ animated: Bool) {
             setNavigationBarTransitionState(currentBarState)
         }
         
         private var navigationBar: UINavigationBar? {
-            (view.next as? UIViewController)?.navigationController?.navigationBar
+            //(view.next as? UIViewController)?.navigationController?.navigationBar
+            return findNavBar(self.view)
         }
         
         func setNavigationBarTransitionState(_ state: BarState) {
@@ -79,5 +84,36 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                 $0.layer.shadowOpacity = opacity
             })
         }
+        
+        
+        private func findNavBar(_ subview: UIView?) -> UINavigationBar? {
+            guard let subview = subview else { return nil }
+            
+            for v in subview.subviews {
+                if let navBar = v as? UINavigationBar {
+                    return navBar
+                }
+            }
+            
+            return findNavBar(subview.superview)
+        }
+        
+        /// go downwards
+        /*private func findNavBar(_ root: UIView?) -> UINavigationBar? {
+            guard let root = root else { return nil }
+
+            var navbar: UINavigationBar? = nil
+            for v in root.subviews {
+                if let navBar = v as? UINavigationBar {
+                    navbar = navBar
+                    break
+                } else {
+                    navbar = findNavBar(v)
+                    if navbar != nil { break }
+                }
+            }
+
+            return navbar
+        }*/
     }
 }
