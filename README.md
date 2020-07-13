@@ -7,7 +7,7 @@ Create a great navigation header like this in SwiftUI with just a few lines of c
 ```
 import SwiftUINavigationHeader
 
-struct ThirdView: View {
+struct DetailView: View {
     var body: some View {
         NavigationHeaderContainer(bottomFadeout: true) {
             Image("roadster")
