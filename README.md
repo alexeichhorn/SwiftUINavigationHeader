@@ -12,7 +12,6 @@ struct DetailView: View {
         NavigationHeaderContainer(bottomFadeout: true) {
             Image("roadster")
                 .resizable()
-                .scaledToFill()
         } content: {
             
             topView
