@@ -1,8 +1,8 @@
 import SwiftUI
 
 public extension View {
-    func navigationBarState(_ barState: BarState) -> some View {
-        return navigationBarTitleDisplayMode(.inline)
+    func navigationBarState(_ barState: BarState, displayMode: NavigationBarItem.TitleDisplayMode = .inline) -> some View {
+        return navigationBarTitleDisplayMode(displayMode)
             .overlay(NavigationBarView(state: barState).frame(width: 0, height: 0))
     }
 }
