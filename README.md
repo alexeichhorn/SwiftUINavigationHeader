@@ -4,7 +4,7 @@
 
 Create a great navigation header like this in SwiftUI with just a few lines of code
 
-```
+```swift
 import SwiftUINavigationHeader
 
 struct DetailView: View {
@@ -39,6 +39,6 @@ struct DetailView: View {
 
 Subsequent views inside the same NavigationView should have the following added code snippet, to make sure the navigation bar is always in the correct state:
 
-```
+```swift
 .navigationBarState(.compact, displayMode: .automatic)
 ```
