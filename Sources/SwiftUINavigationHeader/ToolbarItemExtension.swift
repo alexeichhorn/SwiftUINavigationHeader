@@ -28,7 +28,7 @@ public struct HeaderToolbarItem<Content: View>: ToolbarContent {
     
 }
 
-fileprivate extension View {
+public extension View {
     
     func tintColor(for barState: BarStateWrapper) -> some View {
         let tintColor: UIColor
