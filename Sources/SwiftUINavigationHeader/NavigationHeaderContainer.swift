@@ -7,17 +7,28 @@
 
 import SwiftUI
 
-public struct NavigationHeaderContainer<Header, Content>: View where Header: View, Content: View {
+public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where Header: View, Content: View, Toolbar: ToolbarContent {
     let header: Header
     let content: Content
+    let toolbar: (BarStateWrapper) -> Toolbar
     let bottomFadeout: Bool
     let headerAlignment: Alignment
     
     private var headerHeight: ((CGSize) -> CGFloat)?
+    private var baseTintColor: UIColor = .systemBlue
     
-    public init(bottomFadeout: Bool = false, headerAlignment: Alignment = .center, @ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content) {
+    public init(bottomFadeout: Bool = false, headerAlignment: Alignment = .center, @ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content, @ToolbarContentBuilder toolbar: @escaping (BarStateWrapper) -> Toolbar) {
         self.header = header()
         self.content = content()
+        self.toolbar = toolbar
+        self.bottomFadeout = bottomFadeout
+        self.headerAlignment = headerAlignment
+    }
+    
+    public init(bottomFadeout: Bool = false, headerAlignment: Alignment = .center, @ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content) where Toolbar == ToolbarItem<Void, EmptyView> {
+        self.header = header()
+        self.content = content()
+        self.toolbar = { _  in ToolbarItem { EmptyView() } }
         self.bottomFadeout = bottomFadeout
         self.headerAlignment = headerAlignment
     }
@@ -50,7 +61,10 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
                             }
                             
                         }
-                        .navigationBarState(self.navigationBarState(for: geo, outerGeometry: outerGeo))
+                        .navigationBarState(self.navigationBarState(for: geo, outerGeometry: outerGeo), defaultTintColor: baseTintColor)
+                        .toolbar {
+                            toolbar(BarStateWrapper(state: navigationBarState(for: geo, outerGeometry: outerGeo), baseTintColor: baseTintColor))
+                        }
                     }
                     .frame(height: self.unscaledBackdropHeight(for: outerGeo))
                     
@@ -62,10 +76,21 @@ public struct NavigationHeaderContainer<Header, Content>: View where Header: Vie
     }
     
     
-    public func headerHeight(_ closure: @escaping (_ frameSize: CGSize) -> CGFloat) -> some View {
+    public func headerHeight(_ closure: @escaping (_ frameSize: CGSize) -> CGFloat) -> Self {
         var modifiedSelf = self
         modifiedSelf.headerHeight = closure
         return modifiedSelf
+    }
+    
+    @_disfavoredOverload
+    public func baseTintColor(_ tintColor: UIColor) -> Self {
+        var modifiedSelf = self
+        modifiedSelf.baseTintColor = tintColor
+        return modifiedSelf
+    }
+    
+    public func baseTintColor(_ tintColor: Color) -> Self {
+        self.baseTintColor(UIColor(tintColor))
     }
     
     

@@ -2,26 +2,41 @@ import SwiftUI
 
 public extension View {
     func navigationBarState(_ barState: BarState, displayMode: NavigationBarItem.TitleDisplayMode = .inline) -> some View {
+        navigationBarState(barState, displayMode: displayMode, defaultTintColor: nil)
+    }
+    
+    func navigationBarState(_ barState: BarState, displayMode: NavigationBarItem.TitleDisplayMode = .inline, defaultTintColor: UIColor?) -> some View {
         return navigationBarTitleDisplayMode(displayMode)
-            .overlay(NavigationBarView(state: barState).frame(width: 0, height: 0))
+            .overlay(NavigationBarView(state: barState, defaultTintColor: defaultTintColor).frame(width: 0, height: 0))
     }
 }
 
-public enum BarState {
+public enum BarState: Equatable {
     case expanded
     case transitioning(CGFloat)
     case compact
 }
 
+public struct BarStateWrapper {
+    public let state: BarState
+    let baseTintColor: UIColor
+}
+
 fileprivate struct NavigationBarView: UIViewControllerRepresentable {
     let barState: BarState
+    let defaultTintColor: UIColor?
     
-    init(state: BarState) {
+    init(state: BarState, defaultTintColor: UIColor?) {
         self.barState = state
+        self.defaultTintColor = defaultTintColor
     }
     
     func makeUIViewController(context: Context) -> NavigationViewWrapperController {
-        return NavigationViewWrapperController()
+        let vc = NavigationViewWrapperController()
+        if let defaultTintColor = defaultTintColor {
+            vc.defaultTintColor = defaultTintColor
+        }
+        return vc
     }
     
     func updateUIViewController(_ uiViewController: NavigationViewWrapperController, context: Context) {
@@ -44,6 +59,7 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
     class NavigationViewWrapperController: UIViewController {
         
         var currentBarState: BarState = .expanded
+        var defaultTintColor: UIColor = .systemBlue
         
         override func viewWillAppear(_ animated: Bool) {
             setNavigationBarTransitionState(currentBarState)
@@ -74,14 +90,17 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
             switch state {
             case .expanded:
                 navigationBar?.backgroundView?.alpha = 0
+                updateTintColor(0)
                 setNavigationBarShadow(opacity: 1)
                 break
             case .compact:
                 navigationBar?.backgroundView?.alpha = 1
+                updateTintColor(1)
                 setNavigationBarShadow(opacity: 0)
                 break
             case .transitioning(let percentCompleted):
                 navigationBar?.backgroundView?.alpha = percentCompleted
+                updateTintColor(percentCompleted)
                 setNavigationBarShadow(opacity: Float(1-percentCompleted))
                 break
             }
@@ -95,6 +114,14 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                 $0.layer.shadowRadius = 10
                 $0.layer.shadowOpacity = opacity
             })
+            if opacity > 0 {
+                navigationBar?.rawContentView?.clipsToBounds = false
+            }
+        }
+        
+        private func updateTintColor(_ saturation: CGFloat) {
+            let tintColor = saturation <= 0 ? .white : defaultTintColor.withSaturation(saturation)
+            navigationBar?.tintColor = tintColor
         }
         
         
