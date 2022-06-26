@@ -1,9 +1,16 @@
 import SwiftUI
 
 public extension View {
+    
+    @_disfavoredOverload
     func navigationBarState(_ barState: BarState, displayMode: NavigationBarItem.TitleDisplayMode = .inline, defaultTintColor: UIColor? = nil) -> some View {
         return navigationBarTitleDisplayMode(displayMode)
             .overlay(NavigationBarView(state: barState, defaultTintColor: defaultTintColor).frame(width: 0, height: 0))
+    }
+    
+    func navigationBarState(_ barState: BarState, displayMode: NavigationBarItem.TitleDisplayMode = .inline, defaultTintColor: Color) -> some View {
+        return navigationBarTitleDisplayMode(displayMode)
+            .overlay(NavigationBarView(state: barState, defaultTintColor: UIColor(defaultTintColor)).frame(width: 0, height: 0))
     }
 }
 
