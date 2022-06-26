@@ -1,11 +1,7 @@
 import SwiftUI
 
 public extension View {
-    func navigationBarState(_ barState: BarState, displayMode: NavigationBarItem.TitleDisplayMode = .inline) -> some View {
-        navigationBarState(barState, displayMode: displayMode, defaultTintColor: nil)
-    }
-    
-    func navigationBarState(_ barState: BarState, displayMode: NavigationBarItem.TitleDisplayMode = .inline, defaultTintColor: UIColor?) -> some View {
+    func navigationBarState(_ barState: BarState, displayMode: NavigationBarItem.TitleDisplayMode = .inline, defaultTintColor: UIColor? = nil) -> some View {
         return navigationBarTitleDisplayMode(displayMode)
             .overlay(NavigationBarView(state: barState, defaultTintColor: defaultTintColor).frame(width: 0, height: 0))
     }
