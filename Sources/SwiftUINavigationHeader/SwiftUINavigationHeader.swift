@@ -14,6 +14,14 @@ public extension View {
     }
 }
 
+extension View {
+    
+    func navigationBarStateForHeaderContainer(_ barState: BarState, defaultTintColor: UIColor) -> some View {
+        return navigationBarTitleDisplayMode(.inline)
+            .overlay(NavigationBarView(state: barState, defaultTintColor: defaultTintColor, inHeaderContainer: true))
+    }
+}
+
 public enum BarState: Equatable {
     case expanded
     case transitioning(CGFloat)
@@ -28,10 +36,12 @@ public struct BarStateWrapper {
 fileprivate struct NavigationBarView: UIViewControllerRepresentable {
     let barState: BarState
     let defaultTintColor: UIColor?
+    let inHeaderContainer: Bool
     
-    init(state: BarState, defaultTintColor: UIColor?) {
+    init(state: BarState, defaultTintColor: UIColor?, inHeaderContainer: Bool = false) {
         self.barState = state
         self.defaultTintColor = defaultTintColor
+        self.inHeaderContainer = inHeaderContainer
     }
     
     func makeUIViewController(context: Context) -> NavigationViewWrapperController {
@@ -39,6 +49,7 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
         if let defaultTintColor = defaultTintColor {
             vc.defaultTintColor = defaultTintColor
         }
+        vc.inHeaderContainer = inHeaderContainer
         return vc
     }
     
@@ -63,6 +74,7 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
         
         var currentBarState: BarState = .expanded
         var defaultTintColor: UIColor = .systemBlue
+        var inHeaderContainer = false
         
         override func viewWillAppear(_ animated: Bool) {
             setNavigationBarTransitionState(currentBarState)
@@ -124,7 +136,33 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
         
         private func updateTintColor(_ saturation: CGFloat) {
             let tintColor = saturation <= 0 ? .white : defaultTintColor.withSaturation(saturation)
-            navigationBar?.tintColor = tintColor
+            
+            
+            if #available(iOS 16.0, *) {
+                if inHeaderContainer {
+                    
+                    (navigationBar?.rawBarButtons[safe: 1]?.subviews[safe: 2]?.subviews[safe: 0] as? UIImageView)?.tintColor = tintColor
+                    
+                    let appearance = UINavigationBarAppearance()
+                    appearance.configureWithDefaultBackground()
+                    //appearance.backgroundEffect = UIBlurEffect(style: .dark)
+                    
+                    let buttonAppearance = UIBarButtonItemAppearance()
+                    buttonAppearance.normal.titleTextAttributes = [.foregroundColor: tintColor]
+                    
+                    appearance.buttonAppearance = buttonAppearance
+                    appearance.backButtonAppearance = buttonAppearance
+                    
+                    parent?.navigationItem.standardAppearance = appearance
+                    parent?.navigationItem.compactAppearance = appearance
+                    parent?.navigationItem.scrollEdgeAppearance = appearance
+                    if #available(iOS 15.0, *) {
+                        parent?.navigationItem.compactScrollEdgeAppearance = appearance
+                    }
+                }
+            } else {
+                navigationBar?.tintColor = tintColor
+            }
         }
         
         

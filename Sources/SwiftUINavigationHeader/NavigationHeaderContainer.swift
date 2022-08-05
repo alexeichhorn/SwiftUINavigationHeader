@@ -61,7 +61,7 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
                             }
                             
                         }
-                        .navigationBarState(self.navigationBarState(for: geo, outerGeometry: outerGeo), defaultTintColor: baseTintColor)
+                        .navigationBarStateForHeaderContainer(self.navigationBarState(for: geo, outerGeometry: outerGeo), defaultTintColor: baseTintColor)
                         .toolbar {
                             toolbar(BarStateWrapper(state: navigationBarState(for: geo, outerGeometry: outerGeo), baseTintColor: baseTintColor))
                         }
