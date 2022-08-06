@@ -134,14 +134,17 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
             }
         }
         
+        static private var navigationBarObserver: NSKeyValueObservation?
+        
         private func updateTintColor(_ saturation: CGFloat) {
-            let tintColor = saturation <= 0 ? .white : defaultTintColor.withSaturation(saturation)
-            
             
             if #available(iOS 16.0, *) {
+                
+                let tintColor = saturation <= 0 ? UIColor(white: CGFloat.random(in: 0.999..<1.0), alpha: 1.0) : defaultTintColor.withSaturation(saturation)
+                
+                navigationBar?.tintColor = tintColor
+                
                 if inHeaderContainer {
-                    
-                    (navigationBar?.rawBarButtons[safe: 1]?.subviews[safe: 2]?.subviews[safe: 0] as? UIImageView)?.tintColor = tintColor
                     
                     let appearance = UINavigationBarAppearance()
                     appearance.configureWithDefaultBackground()
@@ -149,6 +152,9 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                     
                     let buttonAppearance = UIBarButtonItemAppearance()
                     buttonAppearance.normal.titleTextAttributes = [.foregroundColor: tintColor]
+                    buttonAppearance.highlighted.titleTextAttributes = buttonAppearance.normal.titleTextAttributes
+                    buttonAppearance.focused.titleTextAttributes = buttonAppearance.normal.titleTextAttributes
+                    buttonAppearance.disabled.titleTextAttributes = buttonAppearance.normal.titleTextAttributes
                     
                     appearance.buttonAppearance = buttonAppearance
                     appearance.backButtonAppearance = buttonAppearance
@@ -156,11 +162,25 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                     parent?.navigationItem.standardAppearance = appearance
                     parent?.navigationItem.compactAppearance = appearance
                     parent?.navigationItem.scrollEdgeAppearance = appearance
-                    if #available(iOS 15.0, *) {
-                        parent?.navigationItem.compactScrollEdgeAppearance = appearance
+                    parent?.navigationItem.compactScrollEdgeAppearance = appearance
+                    
+                    
+                    
+                    if let backImageView = navigationBar?.rawBarButtons.min(by: \.frame.minX)?.subviews.filter({ !$0.isHidden }).compactMap({ $0.subviews.first as? UIImageView }).first {
+                        
+                        //backImageView.tintColor = tintColor
+                        
+                        Self.navigationBarObserver = backImageView.observe(\.tintColor) { imageView, change in
+                            if imageView.tintColor.distance(to: tintColor) > 0.0001 {
+                                imageView.tintColor = tintColor
+                            }
+                        }
                     }
+                    
                 }
+                
             } else {
+                let tintColor = saturation <= 0 ? .white : defaultTintColor.withSaturation(saturation)
                 navigationBar?.tintColor = tintColor
             }
         }

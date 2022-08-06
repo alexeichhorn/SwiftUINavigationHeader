@@ -50,3 +50,13 @@ extension Collection where Indices.Iterator.Element == Index {
     }
     
 }
+
+extension Collection {
+    
+    /// - returns: element where calculated property is minimum
+    func min<T: Comparable>(by property: (Element) throws -> T) rethrows -> Element? {
+        let mapped = try map({ ($0, try property($0)) })
+        return mapped.min(by: { $0.1 < $1.1 })?.0
+    }
+    
+}
