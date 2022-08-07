@@ -148,6 +148,8 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                 
                 if inHeaderContainer {
                     
+                    let isAnimating = navigationBar?.rawBarButtons.allSatisfy { !($0.layer.animationKeys()?.isEmpty ?? true) } ?? true
+                    
                     let appearance = UINavigationBarAppearance()
                     appearance.configureWithDefaultBackground()
                     //appearance.backgroundEffect = UIBlurEffect(style: .dark)
@@ -161,10 +163,12 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                     appearance.buttonAppearance = buttonAppearance
                     appearance.backButtonAppearance = buttonAppearance
                     
-                    parent?.navigationItem.standardAppearance = appearance
-                    parent?.navigationItem.compactAppearance = appearance
-                    parent?.navigationItem.scrollEdgeAppearance = appearance
-                    parent?.navigationItem.compactScrollEdgeAppearance = appearance
+                    if !isAnimating {
+                        parent?.navigationItem.standardAppearance = appearance
+                        parent?.navigationItem.compactAppearance = appearance
+                        parent?.navigationItem.scrollEdgeAppearance = appearance
+                        parent?.navigationItem.compactScrollEdgeAppearance = appearance
+                    }
                     
                     
                     
