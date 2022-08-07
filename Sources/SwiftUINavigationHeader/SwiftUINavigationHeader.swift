@@ -169,23 +169,30 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                         parent?.navigationItem.compactAppearance = appearance
                         parent?.navigationItem.scrollEdgeAppearance = appearance
                         parent?.navigationItem.compactScrollEdgeAppearance = appearance
-                    }
-                    
-                    
-                    
-                    if let backImageView = navigationBar?.rawBarButtons.min(by: \.frame.minX)?.subviews.filter({ !$0.isHidden }).compactMap({ $0.subviews.first as? UIImageView }).first {
                         
-                        //backImageView.tintColor = tintColor
                         
-                        Self.navigationBarObserver = backImageView.observe(\.tintColor) { [weak self] imageView, change in
-                            if imageView.tintColor.distance(to: tintColor) > 0.0001 {
+                        if let backImageView = navigationBar?.rawBarButtons.min(by: \.frame.minX)?.subviews.filter({ !$0.isHidden }).compactMap({ $0.subviews.first as? UIImageView }).first {
+                            
+                            //backImageView.tintColor = tintColor
+                            
+                            Self.navigationBarObserver = backImageView.observe(\.tintColor) { [weak self] imageView, change in
+                                if imageView.tintColor.distance(to: tintColor) > 0.0001 {
+                                    self?.backImageTintColorLock.tryIfAvailable {
+                                        imageView.tintColor = tintColor
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // make sure tint color doesn't change by a view update during animation
+                        Self.navigationBarObserver = navigationBar?.observe(\.tintColor) { [weak self] navigationBar, change in
+                            if navigationBar.tintColor.distance(to: tintColor) > 0.0001 {
                                 self?.backImageTintColorLock.tryIfAvailable {
-                                    imageView.tintColor = tintColor
+                                    navigationBar.tintColor = tintColor
                                 }
                             }
                         }
                     }
-                    
                 }
                 
             } else {
