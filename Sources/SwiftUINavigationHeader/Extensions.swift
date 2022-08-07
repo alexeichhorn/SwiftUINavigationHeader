@@ -60,3 +60,18 @@ extension Collection {
     }
     
 }
+
+extension NSLock {
+    
+    /// performs `block` if lock currently not locked, else it skips execution (not thread blocking)
+    @discardableResult
+    func tryIfAvailable(_ block: () -> Void) -> Bool {
+        if self.try() {
+            block()
+            self.unlock()
+            return true
+        }
+        return false
+    }
+    
+}

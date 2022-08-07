@@ -136,6 +136,8 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
         
         static private var navigationBarObserver: NSKeyValueObservation?
         
+        private var backImageTintColorLock = NSLock()
+        
         private func updateTintColor(_ saturation: CGFloat) {
             
             if #available(iOS 16.0, *) {
@@ -170,9 +172,11 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                         
                         //backImageView.tintColor = tintColor
                         
-                        Self.navigationBarObserver = backImageView.observe(\.tintColor) { imageView, change in
+                        Self.navigationBarObserver = backImageView.observe(\.tintColor) { [weak self] imageView, change in
                             if imageView.tintColor.distance(to: tintColor) > 0.0001 {
-                                imageView.tintColor = tintColor
+                                self?.backImageTintColorLock.tryIfAvailable {
+                                    imageView.tintColor = tintColor
+                                }
                             }
                         }
                     }
