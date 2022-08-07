@@ -148,7 +148,8 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
                 
                 if inHeaderContainer {
                     
-                    let isAnimating = navigationBar?.rawBarButtons.allSatisfy { !($0.layer.animationKeys()?.isEmpty ?? true) } ?? true
+                    let containsReplicantViews = navigationBar?.rawBarButtons.contains(where: { NSStringFromClass($0.classForCoder) == "_UIReplicantView" }) ?? false
+                    let isAnimating = (navigationBar?.rawBarButtons.allSatisfy { !($0.layer.animationKeys()?.isEmpty ?? true) } ?? true) || containsReplicantViews
                     
                     let appearance = UINavigationBarAppearance()
                     appearance.configureWithDefaultBackground()
