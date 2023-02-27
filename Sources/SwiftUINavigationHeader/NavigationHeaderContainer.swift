@@ -51,6 +51,7 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
                                 .background(LinearGradient(gradient: self.topGradient, startPoint: .top, endPoint: .bottom))
                                 .frame(height: 120, alignment: .top)
                                 .transformEffect(CGAffineTransform(translationX: 0, y: self.backdropTranslation(for: geo)))
+                                .allowsHitTesting(false)
                             
                             
                             if bottomFadeout {
@@ -58,6 +59,7 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
                                 Rectangle()
                                     .foregroundColor(.clear)
                                     .background(LinearGradient(gradient: Gradient(colors: [.clear, Color(.systemBackground)]), startPoint: .center, endPoint: .bottom))
+                                    .allowsHitTesting(false)
                             }
                             
                         }

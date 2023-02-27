@@ -18,7 +18,7 @@ extension View {
     
     func navigationBarStateForHeaderContainer(_ barState: BarState, defaultTintColor: UIColor) -> some View {
         return navigationBarTitleDisplayMode(.inline)
-            .overlay(NavigationBarView(state: barState, defaultTintColor: defaultTintColor, inHeaderContainer: true))
+            .overlay(NavigationBarView(state: barState, defaultTintColor: defaultTintColor, inHeaderContainer: true).allowsHitTesting(false))
     }
 }
 
