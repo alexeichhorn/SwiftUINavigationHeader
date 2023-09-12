@@ -17,6 +17,8 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
     private var headerHeight: ((CGSize) -> CGFloat)?
     private var baseTintColor: UIColor = .systemBlue
     
+    @Environment(\.colorScheme) private var colorScheme
+    
     public init(bottomFadeout: Bool = false, headerAlignment: Alignment = .center, @ViewBuilder header: () -> Header, @ViewBuilder content: () -> Content, @ToolbarContentBuilder toolbar: @escaping (BarStateWrapper) -> Toolbar) {
         self.header = header()
         self.content = content()
@@ -146,13 +148,13 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
     private var topGradient: Gradient {
         let topColor: Color
         if #available(iOS 17.0, *) {
-            topColor = .black
+            topColor = .black.opacity(colorScheme == .light ? 0.5 : 0.3)
         } else {
-            topColor = Color(.systemBackground)
+            topColor = Color(.systemBackground).opacity(0.3)
         }
         
         return Gradient(stops: [
-            Gradient.Stop(color: topColor.opacity(0.3), location: 0),
+            Gradient.Stop(color: topColor, location: 0),
             Gradient.Stop(color: .clear, location: 1)
         ])
     }
