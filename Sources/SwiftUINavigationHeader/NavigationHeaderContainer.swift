@@ -144,8 +144,15 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
     }
     
     private var topGradient: Gradient {
+        let topColor: Color
+        if #available(iOS 17.0, *) {
+            topColor = .black
+        } else {
+            topColor = Color(.systemBackground)
+        }
+        
         return Gradient(stops: [
-            Gradient.Stop(color: Color(.systemBackground).opacity(0.3), location: 0),
+            Gradient.Stop(color: topColor.opacity(0.3), location: 0),
             Gradient.Stop(color: .clear, location: 1)
         ])
     }
