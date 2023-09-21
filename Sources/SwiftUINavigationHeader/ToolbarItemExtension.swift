@@ -39,7 +39,11 @@ public extension View {
         case .compact: tintColor = barState.baseTintColor
         }
         
-        return self.foregroundColor(Color(tintColor))
+        if #available(iOS 16.0, *) {
+            return self.tint(Color(tintColor))
+        } else {
+            return self.foregroundColor(Color(tintColor))
+        }
     }
     
 }
