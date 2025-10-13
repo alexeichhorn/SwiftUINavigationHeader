@@ -87,6 +87,7 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
                             toolbar(BarStateWrapper(state: navigationBarState(for: geo, outerGeometry: outerGeo), baseTintColor: baseTintColor))
                         }
                     }
+                    .ignoresSafeArea(.all, edges: [.leading, .trailing])
                     .frame(height: self.unscaledBackdropHeight(for: outerGeo))
                     
                     content
