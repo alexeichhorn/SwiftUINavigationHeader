@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SmoothGradient
 
 public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where Header: View, Content: View, Toolbar: ToolbarContent {
     let header: Header
@@ -50,7 +51,14 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
                             // top fade out
                             Rectangle()
                                 .foregroundColor(.clear)
-                                .background(LinearGradient(gradient: self.topGradient, startPoint: .top, endPoint: .bottom))
+                                .background {
+                                    if #available(iOS 17.0, *) {
+                                        // clear color must be represented as same color with opacity 0 to not have e.g. `black` leak in when transitioning from white
+                                        SmoothLinearGradient(from: self.topGradientTopColor, to: self.topGradientTopColor.opacity(0.0), startPoint: .top, endPoint: .bottom)
+                                    } else {
+                                        LinearGradient(gradient: self.topGradient, startPoint: .top, endPoint: .bottom)
+                                    }
+                                }
                                 .frame(height: 120, alignment: .top)
                                 .transformEffect(CGAffineTransform(translationX: 0, y: self.backdropTranslation(for: geo)))
                                 .allowsHitTesting(false)
@@ -60,7 +68,14 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
                                 // bottom fade out
                                 Rectangle()
                                     .foregroundColor(.clear)
-                                    .background(LinearGradient(gradient: Gradient(colors: [.clear, Color(.systemBackground)]), startPoint: .center, endPoint: .bottom))
+                                    .background {
+                                        if #available(iOS 17.0, *) {
+                                            // clear color must be represented as same color with opacity 0 to not have e.g. `black` leak in when transitioning from white
+                                            SmoothLinearGradient(from: Color(.systemBackground).opacity(0.0), to: Color(.systemBackground), startPoint: .center, endPoint: .bottom)
+                                        } else {
+                                            LinearGradient(gradient: Gradient(colors: [.clear, Color(.systemBackground)]), startPoint: .center, endPoint: .bottom)
+                                        }
+                                    }
                                     .allowsHitTesting(false)
                             }
                             
@@ -145,13 +160,16 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
         }
     }
     
-    private var topGradient: Gradient {
-        let topColor: Color
+    private var topGradientTopColor: Color {
         if #available(iOS 17.0, *) {
-            topColor = .black.opacity(colorScheme == .light ? 0.5 : 0.3)
+            .black.opacity(colorScheme == .light ? 0.5 : 0.3)
         } else {
-            topColor = Color(.systemBackground).opacity(0.3)
+            Color(.systemBackground).opacity(0.3)
         }
+    }
+    
+    private var topGradient: Gradient {
+        let topColor = topGradientTopColor
         
         return Gradient(stops: [
             Gradient.Stop(color: topColor, location: 0),
