@@ -100,6 +100,7 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
         }
         
         func setNavigationBarTransitionState(_ state: BarState) {
+            guard #unavailable(iOS 26.0) else { return }
             guard isActive else { return }
             
             switch state {
@@ -123,6 +124,7 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
         }
         
         private func setNavigationBarShadow(opacity: Float) {
+            guard #unavailable(iOS 26.0) else { return }
             
             navigationBar?.rawBarButtons.forEach({
                 $0.layer.shadowOffset = .zero
@@ -139,6 +141,7 @@ fileprivate struct NavigationBarView: UIViewControllerRepresentable {
         private var backImageTintColorLock = NSLock()
         
         private func updateTintColor(_ saturation: CGFloat) {
+            guard #unavailable(iOS 26.0) else { return }
             
             if #available(iOS 16.0, *) {
                 

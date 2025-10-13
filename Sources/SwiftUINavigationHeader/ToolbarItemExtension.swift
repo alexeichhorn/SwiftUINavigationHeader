@@ -29,21 +29,28 @@ public struct HeaderToolbarItem<Content: View>: ToolbarContent {
 }
 
 public extension View {
-    
+
+    @ViewBuilder
     func tintColor(for barState: BarStateWrapper) -> some View {
-        let tintColor: UIColor
-        switch barState.state {
-        case .expanded: tintColor = .white
-        case .transitioning(let percentage):
-            tintColor = barState.baseTintColor.withSaturation(percentage)
-        case .compact: tintColor = barState.baseTintColor
-        }
-        
-        if #available(iOS 16.0, *) {
-            return self.tint(Color(tintColor))
+        if #available(iOS 26.0, *) {
+            self
         } else {
-            return self.foregroundColor(Color(tintColor))
+            let tintColor = Self.computeTintColor(for: barState)
+            if #available(iOS 16.0, *) {
+                self.tint(Color(tintColor))
+            } else {
+                self.foregroundColor(Color(tintColor))
+            }
         }
     }
-    
+
+    private static func computeTintColor(for barState: BarStateWrapper) -> UIColor {
+        switch barState.state {
+        case .expanded: return .white
+        case .transitioning(let percentage):
+            return barState.baseTintColor.withSaturation(percentage)
+        case .compact: return barState.baseTintColor
+        }
+    }
+
 }
