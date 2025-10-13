@@ -62,6 +62,7 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
                                 .frame(height: 120, alignment: .top)
                                 .transformEffect(CGAffineTransform(translationX: 0, y: self.backdropTranslation(for: geo)))
                                 .allowsHitTesting(false)
+                                .ignoresSafeArea(.all, edges: [.leading, .trailing])
                             
                             
                             if bottomFadeout {
@@ -77,6 +78,7 @@ public struct NavigationHeaderContainer<Header, Content, Toolbar>: View where He
                                         }
                                     }
                                     .allowsHitTesting(false)
+                                    .ignoresSafeArea(.all, edges: [.leading, .trailing])
                             }
                             
                         }
